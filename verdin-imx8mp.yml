@@ -1,0 +1,82 @@
+header:
+  version: 16
+  includes:
+    - common.yml  
+machine:
+  verdin-imx8mp
+distro:
+  poky
+build_system: oe
+repos:
+  openembedded-core:
+    url: "https://github.com/openembedded/openembedded-core"
+    branch: scarthgap
+    path: "/build/layers/openembedded-core"
+    layers:
+      meta:
+  bitbake:
+    url: "https://github.com/openembedded/bitbake"
+    branch: "2.8"
+    path: "/build/layers/openembedded-core/bitbake"
+    layers:
+      bitbake: excluded
+  meta-yocto:
+    url: "https://git.yoctoproject.org/git/meta-yocto"
+    branch: scarthgap
+    path: "/build/layers/meta-yocto"
+    layers:
+      meta-poky:
+  meta-openembedded:
+    url: "https://github.com/openembedded/meta-openembedded"
+    branch: scarthgap
+    path: "/build/layers/meta-openembedded"
+    layers:
+      meta-oe:
+      meta-filesystems:
+      meta-networking:
+      meta-multimedia:
+      meta-python:
+  meta-freescale:
+    url: "https://github.com/Freescale/meta-freescale"
+    branch: scarthgap
+    path: "/build/layers/meta-freescale"
+  meta-freescale-distro:
+    url: "https://github.com/Freescale/meta-freescale-distro"
+    branch: scarthgap
+    path: "/build/layers/meta-freescale-distro"
+  meta-freescale-3rdparty:
+    url: "https://github.com/Freescale/meta-freescale-3rdparty"
+    branch: scarthgap
+    path: "/build/layers/meta-freescale-3rdparty"
+  meta-toradex-nxp:
+    url: "https://git.toradex.com/meta-toradex-nxp.git"
+    branch: scarthgap-7.x.y
+    path: "/build/layers/meta-toradex-nxp"
+  meta-toradex-bsp-common:
+    url: "https://git.toradex.com/meta-toradex-bsp-common.git"
+    branch: scarthgap-7.x.y
+    path: "/build/layers/meta-toradex-bsp-common"
+  meta-toradex-distro:
+    url: "https://git.toradex.com/meta-toradex-distro.git"
+    branch: scarthgap-7.x.y
+    path: "/build/layers/meta-toradex-distro"
+  meta-security:
+    url: "https://git.yoctoproject.org/git/meta-security"
+    branch: scarthgap
+    path: "/build/layers/meta-security"
+    layers:
+      meta-tpm:
+local_conf_header:
+  meta-custom: |
+    DL_DIR ?= "${TOPDIR}/downloads"
+    SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES ?= "package_ipk"
+    EXTRA_IMAGE_FEATURES ?= "debug-tweaks package-management"
+    INHERIT += "toradex-mirrors toradex-sanity"
+    MACHINES_DOWNSTREAM_DISTRO_DEFAULT = " apalis-imx8 aquila-am69 aquila-am69-k3r5 colibri-imx8x verdin-am62 verdin-am62-k3r5  verdin-imx8mm verdin-imx8mp "
+    DISTRO ?= "${@bb.utils.contains("MACHINES_DOWNSTREAM_DISTRO_DEFAULT", d.getVar('MACHINE') or '', "tdx-xwayland", "tdx-xwayland-upstream", d)}"
+    INHERIT += "toradex-mirrors toradex-sanity"
+    ACCEPT_FSL_EULA = "1"
+
+target: core-image-minimal
